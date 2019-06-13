@@ -1,5 +1,5 @@
 CXX ?= g++
-GENCODES ?= 60
+GENCODES ?= 35 
 
 INCLUDE_DIRS = -I./src
 NVCC_FLAGS = -ccbin $(CXX) -std=c++11 -Xcompiler -Wall,-Wextra
@@ -24,6 +24,9 @@ bench/bench: bench/bench.cu
 bench: bench/bench
 
 main: main.cu
+	nvcc $(NVCC_OPT_FLAGS) $(NVCC_FLAGS) $(GENCODES:%=--gpu-architecture=compute_%) $(GENCODES:%=--gpu-code=sm_%) $(INCLUDE_DIRS) $(NVCC_LIBS) -o $@ $<
+
+main2: main2.cu
 	nvcc $(NVCC_OPT_FLAGS) $(NVCC_FLAGS) $(GENCODES:%=--gpu-architecture=compute_%) $(GENCODES:%=--gpu-code=sm_%) $(INCLUDE_DIRS) $(NVCC_LIBS) -o $@ $<
 
 .PHONY: clean
