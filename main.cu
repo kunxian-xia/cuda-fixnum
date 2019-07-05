@@ -129,8 +129,19 @@ uint8_t* read_mnt_fq(FILE* inputs) {
   return buf;
 }
 
+uint8_t* read_mnt_fq2(FILE *inputs) {
+  uint8_t* buf = (uint8_t*)calloc(bytes_per_elem*2, sizeof(uint8_t));
+  fread((void*)(buf), io_bytes_per_elem*sizeof(uint8_t), 1, inputs);
+  fread((void*)(buf+bytes_per_elem), io_bytes_per_elem*sizeof(uint8_t), 1, inputs);
+}
+
 void write_mnt_fq(uint8_t* fq, FILE* outputs) {
   fwrite((void *) fq, io_bytes_per_elem * sizeof(uint8_t), 1, outputs);
+}
+
+void write_mnt_fq2(uint8_t* fq2, FILE* outputs) {
+  fwrite((void *) fq2, io_bytes_per_elem * sizeof(uint8_t), 1, outputs);
+  fwrite((void *) (fq2+bytes_per_elem), io_bytes_per_elem * sizeof(uint8_t), 1, outputs);
 }
 
 void print_array(uint8_t* a) {

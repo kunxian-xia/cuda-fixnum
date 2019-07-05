@@ -16,3 +16,9 @@ template <typename fixnum>
 class modnum_monty_cios;
 
 ```
+
+## data move
+
+### host -> device
+
+### device -> host
