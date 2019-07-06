@@ -29,6 +29,9 @@ main: main.cu
 word: word.cu quadratic_ext.cu
 	nvcc $(NVCC_DBG_FLAGS) $(NVCC_OPT_FLAGS) $(NVCC_FLAGS) $(GENCODES:%=--gpu-architecture=compute_%) $(GENCODES:%=--gpu-code=sm_%) $(INCLUDE_DIRS) $(NVCC_LIBS) -o $@ $<
 
+main2: main2.cu
+	nvcc $(NVCC_OPT_FLAGS) $(NVCC_FLAGS) $(GENCODES:%=--gpu-architecture=compute_%) $(GENCODES:%=--gpu-code=sm_%) $(INCLUDE_DIRS) $(NVCC_LIBS) -o $@ $<
+
 .PHONY: clean
 clean:
 	$(RM) tests/test-suite bench/bench word main
