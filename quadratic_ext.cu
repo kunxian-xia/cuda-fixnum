@@ -22,7 +22,9 @@ public:
     typedef quad_ext_element<fixnum> quad_ext_element;
 
     __device__ quad_ext(fixnum modulus, fixnum _alpha) : mod(modulus), alpha(_alpha) {
-        mod.to_modnum(alpha);
+        modnum t;
+        mod.to_modnum(t, alpha);
+        alpha = t;
     }
 
     __device__ void to_modnum(quad_ext_element &z) {

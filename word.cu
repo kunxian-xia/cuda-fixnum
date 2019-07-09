@@ -15,7 +15,7 @@ const int bytes_per_fixnum = 128;
 typedef warp_fixnum<bytes_per_fixnum, u64_fixnum> fixnum;
 typedef modnum_monty_cios<fixnum> modnum_redc;
 
-typedef quad_ext_element<fixnum, modnum_redc> quad;
+typedef quad_ext_element<fixnum> quad;
 
 __global__ void dispatch(fixnum *alpha, fixnum *modulus, quad *a, quad *b, quad *c)
 {
@@ -33,15 +33,15 @@ __global__ void dispatch(fixnum *alpha, fixnum *modulus, quad *a, quad *b, quad 
         // TODO: This offset calculation is entwined with fixnum layout and so
         // belongs somewhere else.
         int off = idx * fixnum::layout::WIDTH + fixnum::layout::laneIdx();
-        modnum_redc mod(modulus[off]);
+        // modnum_redc mod(modulus[off]);
         
-        quad_ext_element<fixnum, modnum_redc>::to_modnum(mod, a[off]);
-        quad_ext_element<fixnum, modnum_redc>::to_modnum(mod, b[off]);
-
         quad_ext<fixnum, modnum_redc> ext(modulus[off], alpha[off]);
-        ext.add(c[off], a[off], b[off]);
+        ext.to_modnum(a[off]);
+        ext.to_modnum(b[off]);
+        ext.mul(c[off], a[off], b[off]);
 
-        quad_ext_element<fixnum, modnum_redc>::from_modnum(mod, c[off]);
+        // quad_ext_element<fixnum, modnum_redc>::from_modnum(mod, c[off]);
+        ext.from_modnum(c[off]);
         // quad_ext_element<fixnum, modnum_redc>::from_modnum(mod, a[off]);
         // quad_ext_element<fixnum, modnum_redc>::from_modnum(mod, b[off]);
         // TODO: This is hiding a sin against memory aliasing / management /
@@ -73,12 +73,12 @@ int main()
     memset(bb, 0, sizeof(bb));
     memset(bc, 0, sizeof(bc));
 
-    // ba[0] = 10, ba[bytes_per_fixnum+0] = 11;
-    // bb[0] = 10, bb[bytes_per_fixnum+0] = 11;
-    ba[0] = 115, ba[1] = 11; ba[16] = 11; ba[17] = 105;
-    ba[8] = 10, ba[8+1] = 11; ba[24] = 5; ba[25] = 6;
-    bb[0] = 10, bb[1] = 11; bb[16] = 77; bb[17] = 35;
-    bb[8] = 7; bb[9] = 73;
+    ba[0] = 20; ba[8] = 1;
+    bb[0] = 30; bb[8] = 1;
+    // ba[0] = 115, ba[1] = 11; ba[16] = 11; ba[17] = 105;
+    // ba[8] = 10, ba[8+1] = 11; ba[24] = 5; ba[25] = 6;
+    // bb[0] = 10, bb[1] = 11; bb[16] = 77; bb[17] = 35;
+    // bb[8] = 7; bb[9] = 73;
 
     fixnum::from_bytes(reinterpret_cast<uint8_t*>(alpha), b_alpha, fixnum::BYTES);
     fixnum::from_bytes(reinterpret_cast<uint8_t*>(modulus), mnt4_modulus, fixnum::BYTES);
