@@ -10,7 +10,7 @@ public:
     modnum a1;
     modnum a2;
 
-    __device__ quad_ext_element() { }
+    __device__ cubic_ext_element() { }
 };
 
 template < typename fixnum, typename monty >
@@ -20,7 +20,7 @@ public:
     monty mod;
     modnum alpha; 
 
-    typedef cubic_ext_element<fixnum> quad_ext_element;
+    typedef cubic_ext_element<fixnum> ext_element;
 
     __device__ cubic_ext(fixnum modulus, fixnum _alpha) : mod(modulus), alpha(_alpha) {
         modnum t;
@@ -28,7 +28,7 @@ public:
         alpha = t;
     }
 
-    __device__ void to_modnum(quad_ext_element &z) {
+    __device__ void to_modnum(ext_element &z) {
         modnum t0, t1, t2;
         mod.to_modnum(t0, z.a0);
         mod.to_modnum(t1, z.a1);
@@ -37,7 +37,7 @@ public:
         z.a0 = t0; z.a1 = t1; z.a2 = t2;
     }
 
-    __device__ void from_modnum(quad_ext_element &z) {
+    __device__ void from_modnum(ext_element &z) {
         fixnum t0, t1, t2;
         mod.from_modnum(t0, z.a0);
         mod.from_modnum(t1, z.a1);
@@ -46,7 +46,7 @@ public:
         z.a0 = t0; z.a1 = t1; z.a2 = t2;
     }
 
-    __device__ void add(quad_ext_element &z, quad_ext_element &x, quad_ext_element &y) {
+    __device__ void add(ext_element &z, ext_element &x, ext_element &y) {
         modnum t0, t1, t2;
         mod.add(t0, x.a0, y.a0);
         mod.add(t1, x.a1, y.a1);
@@ -55,7 +55,7 @@ public:
         z.a0 = t0; z.a1 = t1; z.a2 = t2;
     }
 
-    __device__ void mul(quad_ext_element &z, quad_ext_element x, quad_ext_element y) {
+    __device__ void mul(ext_element &z, ext_element x, ext_element y) {
         modnum t0, t1, t2;
         modnum a0b0, a0b1, a0b2;
         modnum a1b0, a1b1, a1b2;
